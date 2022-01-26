@@ -1,11 +1,14 @@
 const jwt = require('jsonwebtoken')
-const config = require('../config/environment')
+const config = require('../config/environment.js')
 
 const verifyToken = (req, res, next) => {
     try {
 	const clientToken = req.cookies.user
-	console.log("COOKIE :::: "+req.cookies)
-	const decoded = jwt.verify(clientToken, config.env.SECERET_KEY)
+	const decoded = jwt.verify(clientToken, config.env.SECERET_KEY, function(err, decoded) {
+		console.log(err)
+	}
+	)
+	console.log(res.locals)
 
 	if(decoded) {
 	    res.locals.userId = decoded.user_id

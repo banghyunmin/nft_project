@@ -31,7 +31,7 @@ exports.show = (req, res) => {
 	if(!same) return res.status(404).json({err: 'Incorrect Password'});
 	
 	const token = jwt.sign({
-	    user_id: user.id
+	    data: user.id
 	}, config.env.SECRET_KEY, {
 	    expiresIn: '1h'
 	});
