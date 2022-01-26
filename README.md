@@ -6,7 +6,7 @@ npm: 6.12.0
 
 mysql:  14.14 Distrib 5.7.28, for macos10.14 (x86_64) using  EditLine wrapper
 
-## Hierarchy
+## Directory
 
 * NodeJS_REST-API_tutorial
   * app
