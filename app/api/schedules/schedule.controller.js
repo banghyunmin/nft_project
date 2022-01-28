@@ -59,9 +59,9 @@ function removeSpace(str) {
 }
 
 exports.create = (req, res) => {
-    // console.log("create");
-    //const image = req.file.destination+req.file.filename;
-    const image = req.body.image || '';
+    console.log(req.file);
+    const image = req.file.destination+req.file.filename;
+    //const image = req.body.image || '';
     const name = req.body.name || '';
     const weblink = req.body.weblink || '';
     const twitlink = req.body.twitlink || '';
@@ -92,21 +92,38 @@ exports.create = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const newName = req.body.name || '';
-    const newPw = req.body.pw || '';
-    const name = req.params.name;
+    const image = req.body.image || '';
+    const name = req.body.name || '';
+    const weblink = req.body.weblink || '';
+    const twitlink = req.body.twitlink || '';
+    const discordlink = req.body.discordlink || '';
+    const date = req.body.date || '';
+    const count = req.body.count || '';
+    const price = req.body.price || '';
+    const high_price = req.body.high_price || '';
+    const id = req.params.id;
+    if (!id) return res.status(400).json({error: 'Incorrect id'});
+    if(!image.length) return res.status(400).json({err: 'Incorrect image'})
+    if(!name.length) return res.status(400).json({err: 'Incorrect name'})
+    if(!date.length) return res.status(400).json({err: 'Incorrect date'})
+    if(!count.length) return res.status(400).json({err: 'Incorrect count'})
+    if(!price.length) return res.status(400).json({err: 'Incorrect price'})
 
-    if(!name.length) return res.status(400).json({err: 'Incorrect name'});
-    if(!newName.length) return res.status(400).json({err: 'Incorrect new name'});
-    if(!newPw.length) return res.status(400).json({err: 'Incorrect password'});
-    const encryptPw = bcrypt.hashSync(newPw, 10)
-
-    models.User.update(
-        {name: newName, pw: encryptPw},
-        {where: {name: name}, returning: true})
-        .then(function(result) {
-             res.json(result[1][0]);
-        }).catch(function(err) {
+    schedules.Schedule.update(
+        {
+	  image: image,
+	  name: name,
+	  weblink: weblink,
+	  twitlink: twitlink,
+	  discordlink: discordlink,
+	  date: date,
+	  count: count,
+	  price: price,
+	  high_price: high_price
+	},
+        {where: {id: id}, returning: true})
+	.then((schedule) => res.status(201).json(schedule))
+        .catch(function(err) {
              //TODO: error handling
              return res.status(404).json({err: 'Undefined error!'});
     });
