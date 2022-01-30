@@ -59,8 +59,7 @@ function removeSpace(str) {
 }
 
 exports.create = (req, res) => {
-    console.log(req.file);
-    const image = req.file.destination+req.file.filename;
+    const image = req.file ? "http://180.228.243.235/static/images/"+req.file.filename : '';
     //const image = req.body.image || '';
     const name = req.body.name || '';
     const weblink = req.body.weblink || '';
@@ -92,7 +91,8 @@ exports.create = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const image = req.body.image || '';
+    const image = req.file ? "http://180.228.243.235/static/images/"+req.file.filename : '';
+    //const image = req.body.image || '';
     const name = req.body.name || '';
     const weblink = req.body.weblink || '';
     const twitlink = req.body.twitlink || '';

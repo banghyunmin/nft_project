@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 const multer = require('multer')
 const upload = multer({
-	dest: __dirname+'/images/',
+	dest: __dirname+'/public/images/',
 })
 
 router.use(bodyParser.json());
@@ -20,7 +20,7 @@ router.post('/', upload.single('file'), controller.create);
 router.get('/:id', controller.show);
 router.get('/', controller.index);
 // (U) update schedule
-router.put('/:id', controller.update);
+router.put('/:id', upload.single('file'), controller.update);
 // (D) delete schedule
 router.delete('/:id', controller.destroy);
 
