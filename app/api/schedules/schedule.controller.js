@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../../config/environment');
 const cheerio = require('cheerio')
 const request = require('request')
+const fs = require('fs')
 
 exports.index = (req, res) => {
 
@@ -38,11 +39,18 @@ exports.destroy = (req, res) => {
         return res.status(400).json({error: 'Incorrect id'});
     }
 
-    schedules.Schedule.destroy({
+    schedules.Schedule.findOne({
         where: {
             id: id
         }
-    }).then(() => res.status(204).send());
+    }).then(schedule => {
+        if(!schedule) return res.status(404).json({err: 'No Schedule'});
+	const words = schedule.image.split('/')
+	fs.unlink(__dirname +'/public/images/'+ words[words.length-1], function(err) {
+	  if(err) console.log("Error : ", err)
+	})
+	schedules.Schedule.destroy({where: {id:id}}).then(()=> res.status(204).send())
+    });
 };
 
 function removeSpace(str) {
@@ -69,13 +77,17 @@ exports.create = (req, res) => {
     const count = req.body.count || '';
     const price = req.body.price || '';
     const high_price = req.body.high_price || '';
-    if(!image.length) return res.status(400).json({err: 'Incorrect image'})
-    if(!name.length) return res.status(400).json({err: 'Incorrect name'})
-    if(!date.length) return res.status(400).json({err: 'Incorrect date'})
-    if(!count.length) return res.status(400).json({err: 'Incorrect count'})
-    if(!price.length) return res.status(400).json({err: 'Incorrect price'})
-
-
+    if(!image.length || 
+       !name.length ||
+       !date.length ||
+       !count.length ||
+       !price.length) {
+      const words = image.split('/')
+      fs.unlink(__dirname +'/public/images/'+ words[words.length-1], function(err) {
+	if(err) console.log("Error : ", err)
+      })
+      return res.status(400).json({err: 'Incorrect Input'})
+    }
     schedules.Schedule.create({
 	image: image,
 	name: name,
@@ -86,7 +98,14 @@ exports.create = (req, res) => {
 	count: count,
 	price: price,
 	high_price: high_price
-    }).then((schedule) => res.status(201).json(schedule));
+    })
+    .then((schedule) => res.status(201).json(schedule))
+    .catch((err) => {
+      const words = image.split('/')
+      fs.unlink(__dirname +'/public/images/'+ words[words.length-1], function(err) {
+	if(err) console.log("Error : ", err)
+      })
+    });
 
 };
 
@@ -102,14 +121,31 @@ exports.update = (req, res) => {
     const price = req.body.price || '';
     const high_price = req.body.high_price || '';
     const id = req.params.id;
-    if (!id) return res.status(400).json({error: 'Incorrect id'});
-    if(!image.length) return res.status(400).json({err: 'Incorrect image'})
-    if(!name.length) return res.status(400).json({err: 'Incorrect name'})
-    if(!date.length) return res.status(400).json({err: 'Incorrect date'})
-    if(!count.length) return res.status(400).json({err: 'Incorrect count'})
-    if(!price.length) return res.status(400).json({err: 'Incorrect price'})
+    if (!id || 
+    !image.length ||
+    !name.length ||
+    !date.length ||
+    !count.length ||
+    !price.length) {
+      const words = image.split('/')
+      fs.unlink(__dirname +'/public/images/'+ words[words.length-1], function(err) {
+	if(err) console.log("Error : ", err)
+      })
+      return res.status(400).json({err: 'Incorrect price'})
+    }
 
-    schedules.Schedule.update(
+    schedules.Schedule.findOne({
+        where: {
+            id: id
+        }
+    }).then(schedule => {
+      if(!schedule) return res.status(404).json({err: 'No Schedule'});
+      const words = schedule.image.split('/')
+      fs.unlink(__dirname +'/public/images/'+ words[words.length-1], function(err) {
+	if(err) console.log("Error : ", err)
+      })
+
+      schedules.Schedule.update(
         {
 	  image: image,
 	  name: name,
@@ -126,6 +162,7 @@ exports.update = (req, res) => {
         .catch(function(err) {
              //TODO: error handling
              return res.status(404).json({err: 'Undefined error!'});
+      });
     });
 }
 
