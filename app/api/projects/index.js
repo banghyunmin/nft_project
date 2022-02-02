@@ -17,9 +17,9 @@ module.exports = router;
 // Project && ProjectInfo CRUD
 router.post('/', controller.projectCreate);
 router.get('/', controller.projectIndex);
-//router.get('/:id', controller.projectShow);
-//router.put('/:id', controller.projectUpdate);
-//router.delete('/:id', controller.projectDelete);
+router.get('/:id', controller.projectShow);
+router.put('/:id', controller.projectUpdate);
+router.delete('/:id', controller.projectDelete);
 
 // ProjectImage CRUD
 //router.post('/:id/images/', upload.single('file'), controller.imageCreate);
@@ -36,13 +36,13 @@ router.get('/', controller.projectIndex);
 //router.delete('/:id/schedules/:task', controller.scheduleDelete);
 
 // (C) upload schedule
-router.post('/', upload.single('file'), controller.create);
+//router.post('/', upload.single('file'), controller.create);
 // (R) read All schedules && One schedule
-router.get('/:id', controller.show);
-router.get('/', controller.index);
+//router.get('/:id', controller.show);
+//router.get('/', controller.index);
 // (U) update schedule
-router.put('/:id', upload.single('file'), controller.update);
+//router.put('/:id', upload.single('file'), controller.update);
 // (D) delete schedule
-router.delete('/:id', controller.destroy);
+//router.delete('/:id', controller.destroy);
 
-router.post('/auto', controller.automation);
+//router.post('/auto', controller.automation);
