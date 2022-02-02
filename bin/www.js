@@ -6,6 +6,9 @@ const syncDatabase = require('./sync-database');
 app.listen(port, () => {
     console.log('Tutorial app litensing on port 3000');
 
+    syncDatabase.guide().then(() => {
+        console.log("Guides Database sync");
+    });
     syncDatabase.schedule().then(() => {
         console.log("Schedules Database sync");
     });

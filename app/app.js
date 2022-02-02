@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 app.use('/users', require('./api/users'));
 app.use('/schedules', require('./api/schedules'));
-console.log(__dirname)
+app.use('/guides', require('./api/guides'));
 app.use('/static', express.static(__dirname+'/api/schedules/public'));
 
 module.exports = app;
