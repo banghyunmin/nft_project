@@ -7,7 +7,11 @@ const fs = require('fs')
 
 exports.index = (req, res) => {
 
-    schedules.Schedule.findAll().then(function(results) {
+    schedules.Schedule.findAll({
+      order: [
+	['date', 'ASC']
+      ]
+    }).then(function(results) {
         res.json(results);
     }).catch(function(err) {
         //TODO: error handling
