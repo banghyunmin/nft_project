@@ -14,26 +14,28 @@ const controller = require('./project.controller');
 
 module.exports = router;
 
+//==================================//
+//
+//    DATABASES CRUD APIs
+//
+//==================================//
 // Project && ProjectInfo CRUD
 router.post('/', controller.projectCreate);
 router.get('/', controller.projectIndex);
 router.get('/:id', controller.projectShow);
 router.put('/:id', controller.projectUpdate);
 router.delete('/:id', controller.projectDelete);
-
 // ProjectImage CRUD
-//router.post('/:id/images/', upload.single('file'), controller.imageCreate);
-//router.get('/:id/images/', controller.imageIndex);
-//router.get('/:id/images/:img', controller.imageShow);
-//router.put('/:id/images/:img', upload.single('file'), controller.imageUpdate);
-//router.delete('/:id/images/:img', controller.imageDelete);
-
+router.post('/:id/images/', upload.single('file'), controller.imageCreate);
+router.get('/:id/images/', controller.imageIndex);
+router.get('/:id/images/:img', controller.imageShow);
+router.put('/:id/images/:img', upload.single('file'), controller.imageUpdate);
 // ProjectSchedule CRUD
-//router.post('/:id/schedules/', controller.scheduleCreate);
-//router.get('/:id/schedules/', controller.scheduleIndex);
-//router.get('/:id/schedules/:tasks', controller.scheduleShow);
-//router.put('/:id/schedules/:task', controller.scheduleUpdate);
-//router.delete('/:id/schedules/:task', controller.scheduleDelete);
+router.post('/:id/schedules/', controller.scheduleCreate);
+router.get('/:id/schedules/', controller.scheduleIndex);
+router.get('/:id/schedules/:task', controller.scheduleShow);
+router.put('/:id/schedules/:task', controller.scheduleUpdate);
+router.delete('/:id/schedules/:task', controller.scheduleDelete);
 
 // (C) upload schedule
 //router.post('/', upload.single('file'), controller.create);

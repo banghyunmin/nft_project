@@ -16,7 +16,10 @@ const Project = sequelize.define('project', {
 	autoIncrement: true,
 	type: Sequelize.INTEGER
     },
-    name: Sequelize.STRING,
+    name: {
+	unique: true,
+	type: Sequelize.STRING
+    }
 });
 Project.associate = models => {
   Project.hasOne(models.ProjectInfo, {foreignKey: "projectId"});
