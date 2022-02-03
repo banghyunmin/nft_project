@@ -20,30 +20,23 @@ exports.projectCreate = (req, res) => {
     const high_price = req.body.high_price || '';
     if(!name.length) return res.status(400).json({err: 'Incorrect Input'})
 
-    projects.Project.findOne({
-        where: {
-            name: name
-        }
-    }).then(result => {
-      if(result) return res.status(404).json({err: 'Already Exists'});
-
-      projects.Project.create({
-	name: name
-      })
-      .then((project) => {
-	projects.ProjectInfo.create({
+    projects.Project.create({
+      name: name
+    }).then((project) => {
+      projects.ProjectInfo.create({
 	  proj_id: project.id,
 	  weblink: weblink,
 	  twitlink: twitlink,
 	  discordlink: discordlink,
 	  price: price,
 	  high_price: high_price
-	})
-	.then((info) => {
-	  res.status(201).json([project, info])
-	})
       })
-    });
+      .then((info) => {
+	res.status(201).json([project, info])
+      })
+    }).catch((err) => {
+      return res.status(400).json({error: "fail create"})
+    })
 };
 exports.projectIndex = (req, res) => {
     projects.Project.findAll()
@@ -138,7 +131,6 @@ exports.imageIndex = (req, res) => {
     }).then(function(results) {
         res.json(results);
     }).catch(function(err) {
-        //TODO: error handling
         return res.status(404).json({err: 'Undefined error!'});
     });
 };
