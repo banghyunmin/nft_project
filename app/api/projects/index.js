@@ -19,9 +19,10 @@ module.exports = router;
 //    DATABASES CRUD APIs
 //
 //==================================//
+// Project API
+router.get('/', controller.projectIndex);
 // Project && ProjectInfo CRUD
 router.post('/', controller.projectCreate);
-router.get('/', controller.projectIndex);
 router.get('/:id', controller.projectShow);
 router.put('/:id', controller.projectUpdate);
 router.delete('/:id', controller.projectDelete);

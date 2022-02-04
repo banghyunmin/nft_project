@@ -6,6 +6,97 @@ const request = require('request')
 const fs = require('fs')
 
 
+
+
+
+
+
+
+//==================================//
+//                                  //
+//          Project API
+//                                  //
+//==================================//
+exports.projectIndex = (req, res) => {
+    const query = `
+	select a.id, a.name, b.weblink, b.twitlink, b.discordlink, b.price, b.high_price, c.image
+	from projects as a
+	left outer join project_infos as b on a.id = b.proj_id
+	left outer join project_images as c on a.id = c.proj_id;
+    `
+
+    projects.sequelize.query(query)
+    .then((firstRes) => {
+      const query2 = `
+	select a.id, b.category, b.date, b.time, b.count
+	from projects as a
+	left outer join project_schedules as b on a.id = b.proj_id;
+      `
+
+      projects.sequelize.query(query2)
+      .then((secondRes) => {
+	//return res.status(200).json([firstRes[0], secondRes[0]])
+	return res.status(200).json(refactoring([firstRes[0], secondRes[0]]))
+      })
+    }).catch(err => {
+      return res.status(200).json(err);
+    })
+};
+
+const refactoring = (json) => {
+  var results = []
+  var line = {}
+  line.image = []
+// image process
+  for(var i = 0; i < json[0].length; i++) {
+    var elem = json[0][i]
+    line.schedule = []
+    line.id = elem.id
+    line.name = elem.name
+    line.weblink = elem.weblink
+    line.twitlink = elem.twitlink
+    line.discordlink = elem.discordlink
+    line.price = elem.price
+    line.high_price = elem.high_price
+    line.image.push(elem.image)
+    if(results.length > 0 && results[results.length - 1].id == line.id) {
+      results[results.length-1].image.push(line.image[0])
+    } else {
+      results.push(line)
+    }
+    line = {}
+    line.image = []
+  }
+// schedule process
+console.log("resrserse : ", results)
+  for(var i = 0; i < json[1].length; i++) {
+    var elem = json[1][i]
+    for(var j = 0; j < results.length; j++) {
+      if(results[j].id == elem.id) results[j].schedule.push(elem)
+    }
+  }
+
+  return results
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //==================================//
 //                                  //
 // Project && ProjectInfo CRUD
@@ -38,49 +129,19 @@ exports.projectCreate = (req, res) => {
       return res.status(400).json({error: "fail create"})
     })
 };
-exports.projectIndex = (req, res) => {
-//    projects.Project.findAll()
-//    .then((result) => res.status(200).json(result));
-
-    const query = `
-	select * 
-	from projects as a left join project_infos as b
-	on a.id = b.proj_id;
-    `
-    projects.sequelize.query(query)
-    .then(results => {
-      return res.status(200).json(results[0])
-    })
-};
 exports.projectShow = (req, res) => {
     const id = parseInt(req.params.id, 10);
     if(!id) return res.status(400).json({err: 'Incorrect id'});
 
-    projects.Project.hasOne(projects.ProjectInfo, {foreKey: 'projectId', sourceKey: 'id'});
-    projects.ProjectInfo.belongsTo(projects.Project, {foreKey: 'projectId', targetKey: 'id'});
+    projects.Project.findOne({
+        where: {
+            id: id
+        }
+    }).then(project => {
+        if(!project) return res.status(404).json({err: 'No Project!'});
 
-//    projects.Project.findOne({
-//        where: {
-//            id: id
-//        }
-//    }).then(project => {
-//        if(!project) return res.status(404).json({err: 'No Project!'});
-//
-//	return res.json(project)
-//    });
-    projects.Project.hasOne(projects.ProjectInfo, {foreKey: 'projectId', sourceKey: 'id'});
-    projects.ProjectInfo.belongsTo(projects.Project, {foreKey: 'projectId', targetKey: 'id'});
-
-    projects.ProjectInfo.findAll({
-      include: [{
-        model:projects.Project,
-	where: {id: id}
-      }]
-    }).then(results => {
-      if(results.length == 0) return res.status(400).json({error: "no data"});
-      console.log(results)
-      return res.status(200).json(results);
-    }).catch((err) => { return res.status(400).json({error: "No data"})})
+	return res.json(project)
+    });
 };
 exports.projectUpdate = (req, res) => {
     const name = req.body.name || '';
