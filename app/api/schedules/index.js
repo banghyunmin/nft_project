@@ -14,11 +14,25 @@ const controller = require('./schedule.controller');
 
 module.exports = router;
 
+
+
+
+//==================================//
+//                                  //
+//          Project API
+//                                  //
+//==================================//
+router.get('/', controller.projectIndex);
+
+
+
+
+
 // (C) upload schedule
 router.post('/', upload.single('file'), controller.create);
 // (R) read All schedules && One schedule
 router.get('/:id', controller.show);
-router.get('/', controller.index);
+//router.get('/', controller.index);
 // (U) update schedule
 router.put('/:id', upload.single('file'), controller.update);
 // (D) delete schedule
