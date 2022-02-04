@@ -1,0 +1,116 @@
+
+> tutorial@1.0.0 start
+> node bin/www.js
+
+TOKEN:::  [Function: verifyToken]
+Tutorial app litensing on port 3000
+Executing (default): CREATE TABLE IF NOT EXISTS `projects` (`id` INTEGER auto_increment , `name` VARCHAR(255) UNIQUE, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): CREATE TABLE IF NOT EXISTS `guides` (`id` INTEGER auto_increment , `title` VARCHAR(255), `image` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): CREATE TABLE IF NOT EXISTS `schedules` (`id` INTEGER auto_increment , `image` VARCHAR(255), `name` VARCHAR(255), `weblink` VARCHAR(255), `twitlink` VARCHAR(255), `discordlink` VARCHAR(255), `date` VARCHAR(255), `count` VARCHAR(255), `price` VARCHAR(255), `high_price` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `projects`
+Executing (default): SHOW INDEX FROM `guides`
+Executing (default): CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER auto_increment , `name` VARCHAR(255), `pw` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `schedules`
+Guides Database sync
+Executing (default): CREATE TABLE IF NOT EXISTS `project_infos` (`id` INTEGER auto_increment , `proj_id` INTEGER, `weblink` VARCHAR(255), `twitlink` VARCHAR(255), `discordlink` VARCHAR(255), `price` VARCHAR(255), `high_price` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `users`
+Schedules Database sync
+Executing (default): SHOW INDEX FROM `project_infos`
+Models Database sync
+Executing (default): CREATE TABLE IF NOT EXISTS `project_schedules` (`id` INTEGER auto_increment , `proj_id` INTEGER, `category` VARCHAR(255), `date` VARCHAR(255), `time` VARCHAR(255), `count` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `project_schedules`
+Executing (default): CREATE TABLE IF NOT EXISTS `project_images` (`id` INTEGER auto_increment , `proj_id` INTEGER, `image` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `project_images`
+Projects Database sync
+Executing (default): SELECT `id`, `title`, `image`, `createdAt`, `updatedAt` FROM `guides` AS `guide`;
+{
+  id: 2,
+  title: 'NFT란?',
+  image: 'http://180.228.243.235/static/guides/1643784729651.jpg',
+  createdAt: 2022-02-02T07:01:34.000Z,
+  updatedAt: 2022-02-02T07:01:34.000Z
+}
+{
+  id: 3,
+  title: '민팅이란?',
+  image: 'http://180.228.243.235/static/guides/1643784731944.jpg',
+  createdAt: 2022-02-02T07:12:39.000Z,
+  updatedAt: 2022-02-02T07:12:39.000Z
+}
+{
+  id: 4,
+  title: '에어드랍이란?',
+  image: 'http://180.228.243.235/static/guides/1643784734066.jpg',
+  createdAt: 2022-02-02T07:13:53.000Z,
+  updatedAt: 2022-02-02T07:13:53.000Z
+}
+{
+  id: 5,
+  title: 'OG란?',
+  image: 'http://180.228.243.235/static/guides/1643784737123.jpg',
+  createdAt: 2022-02-02T07:14:17.000Z,
+  updatedAt: 2022-02-02T07:14:17.000Z
+}
+{
+  id: 6,
+  title: '화이트리스트란?',
+  image: 'http://180.228.243.235/static/guides/1643784738994.jpg',
+  createdAt: 2022-02-02T07:15:00.000Z,
+  updatedAt: 2022-02-02T07:15:00.000Z
+}
+{
+  id: 12,
+  title: '메타마스크 설치 방법',
+  image: 'http://180.228.243.235/static/guides/1643784741049.jpg',
+  createdAt: 2022-02-02T07:57:14.000Z,
+  updatedAt: 2022-02-02T07:57:14.000Z
+}
+{
+  id: 13,
+  title: '카이카스 지갑 설치 방법',
+  image: 'http://180.228.243.235/static/guides/1643784742764.jpg',
+  createdAt: 2022-02-02T07:57:17.000Z,
+  updatedAt: 2022-02-02T07:57:17.000Z
+}
+{
+  id: 14,
+  title: '오픈씨 지갑 연동 방법',
+  image: 'http://180.228.243.235/static/guides/1643784744371.jpg',
+  createdAt: 2022-02-02T07:57:20.000Z,
+  updatedAt: 2022-02-02T07:57:20.000Z
+}
+{
+  id: 15,
+  title: '팬텀 지갑 설치방법',
+  image: 'http://180.228.243.235/static/guides/1643878172105-1.jpg',
+  createdAt: 2022-02-03T08:55:05.000Z,
+  updatedAt: 2022-02-03T08:55:05.000Z
+}
+{
+  id: 16,
+  title: '디지털 자산 구매 방법',
+  image: 'http://180.228.243.235/static/guides/1643878172105-0.jpg',
+  createdAt: 2022-02-03T09:00:22.000Z,
+  updatedAt: 2022-02-03T09:00:22.000Z
+}
+{
+  id: 17,
+  title: '디지털 자산 판매 방법',
+  image: 'http://180.228.243.235/static/guides/1643878172105-2.jpg',
+  createdAt: 2022-02-03T09:00:50.000Z,
+  updatedAt: 2022-02-03T09:00:50.000Z
+}
+{
+  id: 18,
+  title: '이더리움 구매 방법',
+  image: 'http://180.228.243.235/static/guides/1643878172105-3.jpg',
+  createdAt: 2022-02-03T09:01:09.000Z,
+  updatedAt: 2022-02-03T09:01:09.000Z
+}
+{
+  id: 19,
+  title: '민팅 진행 방법',
+  image: 'http://180.228.243.235/static/guides/1643878177988.jpg',
+  createdAt: 2022-02-03T09:02:00.000Z,
+  updatedAt: 2022-02-03T09:02:00.000Z
+}

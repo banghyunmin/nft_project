@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt')
 const config = require('../../config/environment');
 
 exports.index = (req, res) => {
-    guides.Guide.findAll().then(function(results) {
+    guides.Guide.findAll({
+    }).then(function(results) {
         res.json(results);
     }).catch(function(err) {
         //TODO: error handling
@@ -26,6 +27,18 @@ exports.show = (req, res) => {
     })
 };
 
+exports.update = (req, res) => {
+    const id = req.params.id || '';
+    if(!id.length) return res.status(400).json({err: 'id'});
+    const title = req.body.title || '';
+    
+    guides.Guide.update({
+      title: title
+    }, {
+      where: {id: id}
+    }).then((guide) => res.status(201).json(guide));
+};
+
 exports.create = (req, res) => {
     // console.log("create");
     const image = req.body.image || '';
@@ -45,4 +58,16 @@ exports.destroy = (req, res) => {
     }
 
     guides.Guide.destroy({where: {id:id}}).then(()=> res.status(204).send())
+};
+
+exports.automation = (req, res) => {
+    guides.Guide.findAll().then(function(results) {
+	results.forEach((res) =>{
+	  console.log(res.dataValues)
+	})
+        res.json(results);
+    }).catch(function(err) {
+        //TODO: error handling
+        return res.status(404).json({err: 'Undefined error!'});
+    });
 };

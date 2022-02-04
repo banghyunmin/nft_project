@@ -21,11 +21,6 @@ const Project = sequelize.define('project', {
 	type: Sequelize.STRING
     }
 });
-Project.associate = models => {
-  Project.hasOne(models.ProjectInfo, {foreignKey: "projectId"});
-  Project.hasMany(models.ProjectImage, {foreignKey: "projectId"});
-  Project.hasMany(models.ProjectSchedule, {foreignKey: "projectId"});
-}
 const ProjectInfo = sequelize.define('project_info', {
     id: {
 	primaryKey: true,
@@ -39,9 +34,6 @@ const ProjectInfo = sequelize.define('project_info', {
     price: Sequelize.STRING,
     high_price: Sequelize.STRING
 });
-ProjectInfo.associate = models => {
-  ProjectInfo.belongsTo(models.Project, {foreignKey: "id"});
-}
 const ProjectSchedule = sequelize.define('project_schedule', {
     id: {
 	primaryKey: true,
@@ -54,9 +46,6 @@ const ProjectSchedule = sequelize.define('project_schedule', {
     time: Sequelize.STRING,
     count: Sequelize.STRING
 });
-ProjectSchedule.associate = models => {
-  ProjectSchedule.belongsTo(models.Project, {foreignKey: "id"});
-}
 const ProjectImage = sequelize.define('project_image', {
     id: {
 	primaryKey: true,
@@ -66,9 +55,6 @@ const ProjectImage = sequelize.define('project_image', {
     proj_id: Sequelize.INTEGER,
     image: Sequelize.STRING
 });
-ProjectImage.associate = models => {
-  ProjectImage.belongsTo(models.Project, {foreignKey: "projectId", sourceKey: "id"});
-}
 
 module.exports = {
     sequelize: sequelize,

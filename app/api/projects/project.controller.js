@@ -39,22 +39,48 @@ exports.projectCreate = (req, res) => {
     })
 };
 exports.projectIndex = (req, res) => {
-    projects.Project.findAll()
-    .then((result) => res.status(200).json(result));
+//    projects.Project.findAll()
+//    .then((result) => res.status(200).json(result));
+
+    const query = `
+	select * 
+	from projects as a left join project_infos as b
+	on a.id = b.proj_id;
+    `
+    projects.sequelize.query(query)
+    .then(results => {
+      return res.status(200).json(results[0])
+    })
 };
 exports.projectShow = (req, res) => {
     const id = parseInt(req.params.id, 10);
     if(!id) return res.status(400).json({err: 'Incorrect id'});
 
-    projects.Project.findOne({
-        where: {
-            id: id
-        }
-    }).then(project => {
-        if(!project) return res.status(404).json({err: 'No Project!'});
+    projects.Project.hasOne(projects.ProjectInfo, {foreKey: 'projectId', sourceKey: 'id'});
+    projects.ProjectInfo.belongsTo(projects.Project, {foreKey: 'projectId', targetKey: 'id'});
 
-	return res.json(project)
-    });
+//    projects.Project.findOne({
+//        where: {
+//            id: id
+//        }
+//    }).then(project => {
+//        if(!project) return res.status(404).json({err: 'No Project!'});
+//
+//	return res.json(project)
+//    });
+    projects.Project.hasOne(projects.ProjectInfo, {foreKey: 'projectId', sourceKey: 'id'});
+    projects.ProjectInfo.belongsTo(projects.Project, {foreKey: 'projectId', targetKey: 'id'});
+
+    projects.ProjectInfo.findAll({
+      include: [{
+        model:projects.Project,
+	where: {id: id}
+      }]
+    }).then(results => {
+      if(results.length == 0) return res.status(400).json({error: "no data"});
+      console.log(results)
+      return res.status(200).json(results);
+    }).catch((err) => { return res.status(400).json({error: "No data"})})
 };
 exports.projectUpdate = (req, res) => {
     const name = req.body.name || '';
