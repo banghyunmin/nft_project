@@ -83,6 +83,7 @@ const refactoring = (json) => {
     }
   }
 // reprocess
+  const NowDate = getNowDate()
   for(var i = 0; i < results.length; i++) {
     var elem = results[i]
     var cnt = 0
@@ -90,7 +91,7 @@ const refactoring = (json) => {
     for(var j = 0; j < elem.schedule.length; j++) {
       cnt += parseInt(elem.schedule[j].count, 10)
 
-      if(getNowDate() < elem.schedule[j].date && elem.schedule[j].date < elem.schedule[0].date) idx = j
+      if(NowDate < elem.schedule[j].date && elem.schedule[j].date < elem.schedule[0].date) idx = j
     }
     
     results[i].category = elem.schedule[idx].category
@@ -100,11 +101,20 @@ const refactoring = (json) => {
   }
 
 
-  return results.sort((a,b) => {
+  var answer = results.sort((a,b) => {
 	  if(a.date > b.date) return 1
 	  if(a.date == b.date) return 0
 	  if(a.date < b.date) return -1
   })
+  var ans_idx = 0
+  for(var i = 0; i < answer.length; i++) {
+    const elem = answer[i]
+    if(NowDate <= elem.date) {
+	    ans_idx = i
+	    break
+    }
+  }
+  return answer.slice(i)
 }
 
 
@@ -112,6 +122,19 @@ const refactoring = (json) => {
 
 
 
+
+
+
+
+
+
+
+
+//==================================//
+//                                  //
+//             APIs
+//                                  //
+//==================================//
 
 exports.index = (req, res) => {
 

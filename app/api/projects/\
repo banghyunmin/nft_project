@@ -1,0 +1,52 @@
+const projects = require('../../models/projects');
+
+
+
+const query = `
+select * from schedules;
+`
+
+projects.sequelize.query(query)
+.then((results) => {
+
+for(var i = 0; i < results[0].length; i++) {
+  var elem = results[0][i]
+
+
+      projects.ProjectImage.create({
+	proj_id: i+1,
+	date: elem.date,
+	count: elem.count
+      })
+      .then(() => {
+      }).catch((err) => {
+	console.log(err)
+      })
+
+//      projects.ProjectImage.create({
+//	proj_id: i+1,
+//	image: elem.image
+//      })
+//      .then(() => {
+//      }).catch((err) => {
+//	console.log(err)
+//      })
+
+//      projects.ProjectInfo.create({
+//	proj_id: i+1,
+//	weblink: elem.weblink,
+//	twitlink: elem.twitlink,
+//	discordlink: elem.discordlink,
+//	price: elem.price,
+//	high_price: elem.high_price
+//      })
+//      .then(() => {
+//      }).catch((err) => {
+//	console.log(err)
+//      })
+
+}
+
+}).catch(err => {
+	console.log(err)
+})

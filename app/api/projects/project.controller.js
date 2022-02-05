@@ -43,6 +43,17 @@ exports.projectIndex = (req, res) => {
     })
 };
 
+const getNowDate = () => {
+  var today = new Date();
+
+  var year = today.getFullYear();
+  var month = ('0' + (today.getMonth() + 1)).slice(-2);
+  var day = ('0' + today.getDate()).slice(-2);
+
+  var dateString = year + '-' + month  + '-' + day;
+
+  return dateString
+}
 const refactoring = (json) => {
   var results = []
   var line = {}
@@ -68,12 +79,27 @@ const refactoring = (json) => {
     line.image = []
   }
 // schedule process
-console.log("resrserse : ", results)
   for(var i = 0; i < json[1].length; i++) {
     var elem = json[1][i]
     for(var j = 0; j < results.length; j++) {
       if(results[j].id == elem.id) results[j].schedule.push(elem)
     }
+  }
+// reprocess
+  for(var i = 0; i < results.length; i++) {
+    var elem = results[i]
+    var cnt = 0
+    var idx = 0
+    for(var j = 0; j < elem.schedule.length; j++) {
+      cnt += parseInt(elem.schedule[j].count, 10)
+
+      if(getNowDate() < elem.schedule[j].date && elem.schedule[j].date < elem.schedule[0].date) idx = j
+    }
+    
+    results[i].category = elem.schedule[idx].category
+    results[i].date = elem.schedule[idx].date
+    results[i].time = elem.schedule[idx].time
+    results[i].count = cnt
   }
 
   return results
