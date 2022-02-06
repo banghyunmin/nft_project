@@ -24,6 +24,7 @@ module.exports = router;
 //                                  //
 //==================================//
 router.get('/', controller.projectIndex);
+router.get('/getAll', controller.projectIndexAll);
 // Project && ProjectInfo CRUD
 router.post('/', controller.projectCreate);
 router.get('/:id', controller.projectShow);
@@ -34,6 +35,7 @@ router.post('/:id/images/', upload.single('file'), controller.imageCreate);
 router.get('/:id/images/', controller.imageIndex);
 router.get('/:id/images/:img', controller.imageShow);
 router.put('/:id/images/:img', upload.single('file'), controller.imageUpdate);
+router.delete('/:id/images/:img', controller.imageDelete);
 // ProjectSchedule CRUD
 router.post('/:id/schedules/', controller.scheduleCreate);
 router.get('/:id/schedules/', controller.scheduleIndex);

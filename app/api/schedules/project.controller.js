@@ -36,7 +36,34 @@ exports.projectIndex = (req, res) => {
       projects.sequelize.query(query2)
       .then((secondRes) => {
 	//return res.status(200).json([firstRes[0], secondRes[0]])
-	return res.status(200).json(refactoring([firstRes[0], secondRes[0]]))
+	const result = refactoring([firstRes[0], secondRes[0]])
+	return res.status(200).json(result.datas.slice(result.index))
+      })
+    }).catch(err => {
+      return res.status(200).json(err);
+    })
+};
+exports.projectIndexAll = (req, res) => {
+    const query = `
+	select a.id, a.name, b.weblink, b.twitlink, b.discordlink, b.price, b.high_price, c.image
+	from projects as a
+	left outer join project_infos as b on a.id = b.proj_id
+	left outer join project_images as c on a.id = c.proj_id;
+    `
+
+    projects.sequelize.query(query)
+    .then((firstRes) => {
+      const query2 = `
+	select a.id, b.category, b.date, b.time, b.count
+	from projects as a
+	left outer join project_schedules as b on a.id = b.proj_id;
+      `
+
+      projects.sequelize.query(query2)
+      .then((secondRes) => {
+	//return res.status(200).json([firstRes[0], secondRes[0]])
+	const result = refactoring([firstRes[0], secondRes[0]])
+	return res.status(200).json(result.datas)
       })
     }).catch(err => {
       return res.status(200).json(err);
@@ -59,6 +86,11 @@ const refactoring = (json) => {
   var line = {}
   line.image = []
 // image process
+  json[0].sort((a,b) => {
+    if(a.id < b.id) return -1
+    if(a.id == b.id) return 0
+    if(a.id > b.id) return 1
+  })
   for(var i = 0; i < json[0].length; i++) {
     var elem = json[0][i]
     line.schedule = []
@@ -117,7 +149,8 @@ const refactoring = (json) => {
 	    break
     }
   }
-  return answer.slice(i)
+//  return answer.slice(i)
+  return {"datas" : answer, "index" : i}
 }
 
 
@@ -193,7 +226,8 @@ exports.projectShow = (req, res) => {
       projects.sequelize.query(query2)
       .then((secondRes) => {
 	//return res.status(200).json([firstRes[0], secondRes[0]])
-	return res.status(200).json(refactoring([firstRes[0], secondRes[0]]))
+	const result = refactoring([firstRes[0], secondRes[0]])
+	return res.status(200).json(result.datas)
       })
     }).catch(err => {
       return res.status(200).json(err);
@@ -229,6 +263,14 @@ exports.projectDelete = (req, res) => {
 
     projects.ProjectInfo.destroy({
       where:{proj_id:id}
+    }).then(() => {
+      projects.ProjectSchedule.destroy({
+	where:{proj_id:id}
+      }).then(() => {})
+    }).then(() => {
+      projects.ProjectImage.destroy({
+	where:{proj_id:id}
+      }).then(() => {})
     }).then(() => {
       projects.Project.destroy({
 	where:{id:id}
@@ -397,8 +439,13 @@ exports.scheduleIndex = (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (!id) return res.status(400).json({error: 'Incorrect id'});
 
-    projects.ProjectSchedule.findAll({proj_id: id})
-    .then((result) => res.status(200).json(result));
+    projects.ProjectSchedule.findAll({
+      where: {proj_id: id}
+    }).then(function(results) {
+        res.json(results);
+    }).catch(function(err) {
+        return res.status(404).json({err: 'Undefined error!'});
+    });
 };
 exports.scheduleShow = (req, res) => {
     const id = parseInt(req.params.id, 10);
