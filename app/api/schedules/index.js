@@ -42,6 +42,11 @@ router.get('/:id/schedules/', controller.scheduleIndex);
 router.get('/:id/schedules/:task', controller.scheduleShow);
 router.put('/:id/schedules/:task', controller.scheduleUpdate);
 router.delete('/:id/schedules/:task', controller.scheduleDelete);
+// ProjectBest CRUD
+router.get('/:id/bests', controller.bestIndex);
+router.get('/:trash/bests/:id', controller.bestShow);
+router.delete('/:id/bests', controller.bestDelete);
+router.post('/:id/bests', controller.bestCreate);
 
 
 

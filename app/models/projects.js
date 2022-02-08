@@ -55,11 +55,20 @@ const ProjectImage = sequelize.define('project_image', {
     proj_id: Sequelize.INTEGER,
     image: Sequelize.STRING
 });
+const ProjectBest = sequelize.define('project_best', {
+    id: {
+	primaryKey: true,
+	autoIncrement: true,
+	type: Sequelize.INTEGER
+    },
+    proj_id: Sequelize.INTEGER
+});
 
 module.exports = {
     sequelize: sequelize,
     Project: Project,
     ProjectInfo: ProjectInfo,
     ProjectSchedule: ProjectSchedule,
-    ProjectImage: ProjectImage
+    ProjectImage: ProjectImage,
+    ProjectBest: ProjectBest
 }

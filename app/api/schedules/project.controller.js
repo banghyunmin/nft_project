@@ -508,6 +508,82 @@ exports.scheduleDelete = (req, res) => {
 
 
 
+//==================================//
+//                                  //
+// Project Best CRUD
+//                                  //
+//==================================//
+exports.bestCreate = (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (!id) return res.status(400).json({error: 'Incorrect input'});
+
+    projects.ProjectBest.findOne({
+      where: {proj_id:id}
+    }).then((project) => {
+      if(project) return res.status(400).json({error: 'Exist Project'});
+	    
+      projects.ProjectBest.create({
+	proj_id: id
+      })
+      .then((project2) => {
+        res.status(201).json(project2)
+      });
+    })
+};
+exports.bestIndex = (req, res) => {
+    const query = `
+	select a.id, a.name, b.weblink, b.twitlink, b.discordlink, b.price, b.high_price, c.image
+	from (select x.id, x.name from projects as x, project_bests as y
+	where x.id = y.proj_id ) as a
+	left outer join project_infos as b on a.id = b.proj_id
+	left outer join project_images as c on a.id = c.proj_id;
+    `
+
+    projects.sequelize.query(query)
+    .then((firstRes) => {
+      const query2 = `
+	select a.id, b.category, b.date, b.time, b.count
+	from (select x.id, x.name from projects as x, project_bests as y 
+	where x.id = y.proj_id ) as a
+	left outer join project_schedules as b on a.id = b.proj_id;
+      `
+
+      projects.sequelize.query(query2)
+      .then((secondRes) => {
+	//return res.status(200).json([firstRes[0], secondRes[0]])
+	const result = refactoring([firstRes[0], secondRes[0]])
+	return res.status(200).json(result.datas)
+      })
+    }).catch(err => {
+      return res.status(200).json(err);
+    })
+};
+exports.bestShow = (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (!id) {
+        return res.status(400).json({error: 'Incorrect input'});
+    }
+
+    projects.ProjectBest.findOne({
+        where: {proj_id: id}
+    }).then(project => {
+	return res.json(project)
+    });
+};
+exports.bestDelete = (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (!id) {
+        return res.status(400).json({error: 'Incorrect input'});
+    }
+
+    projects.ProjectBest.destroy({
+      where:{proj_id:id}
+    }).then(() => {
+      return res.status(204).send();
+    }).catch((err) => {
+      return res.status(400).json({error: "fail delete"});
+    })
+};
 
 
 
