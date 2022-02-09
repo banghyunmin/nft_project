@@ -181,7 +181,6 @@ exports.projectCreate = (req, res) => {
     const weblink = req.body.weblink || '';
     const twitlink = req.body.twitlink || '';
     const discordlink = req.body.discordlink || '';
-    const price = req.body.price || '';
     const high_price = req.body.high_price || '';
     if(!name.length) return res.status(400).json({err: 'Incorrect Input'})
 
@@ -193,7 +192,6 @@ exports.projectCreate = (req, res) => {
 	  weblink: weblink,
 	  twitlink: twitlink,
 	  discordlink: discordlink,
-	  price: price,
 	  high_price: high_price
       })
       .then((info) => {
@@ -238,7 +236,6 @@ exports.projectUpdate = (req, res) => {
     const weblink = req.body.weblink || '';
     const twitlink = req.body.twitlink || '';
     const discordlink = req.body.discordlink || '';
-    const price = req.body.price || '';
     const high_price = req.body.high_price || '';
     const id = parseInt(req.params.id, 10);
     if(!id) return res.status(400).json({err: 'Incorrect id'});
@@ -253,7 +250,19 @@ exports.projectUpdate = (req, res) => {
       console.log(project)
       if(!project) return res.status(404).json({err: 'No Project!'});
 
-      return res.json(project)
+      projects.ProjectInfo.update({
+	weblink: weblink,
+	twitlink: twitlink,
+	discordlink:discordlink,
+	high_price: high_price
+      },
+      {where: {proj_id: id}}).then((results) => {
+        return res.json([project, results])
+      }).catch((err) => {
+        console.log("project info update fail", err)
+      })
+    }).catch((err) => {
+      console.log("project update fail", err)
     });
 }
 exports.projectDelete = (req, res) => {
@@ -413,6 +422,8 @@ exports.scheduleCreate = (req, res) => {
     const date = req.body.date || '';
     const time = req.body.time || '';
     const count = req.body.count || '';
+    const price = req.body.price || '';
+    const etc = req.body.etc || '';
     const id = parseInt(req.params.id, 10);
     if (!id) return res.status(400).json({error: 'Incorrect input'});
 
@@ -426,7 +437,9 @@ exports.scheduleCreate = (req, res) => {
         category: category,
         date: date,
         time: time,
-        count: count
+        count: count,
+        price: price,
+        etc: etc
       })
       .then((project) => {
         if(!project) return res.status(400).json({error: "Incorrect Schedule"});
@@ -475,13 +488,17 @@ exports.scheduleUpdate = (req, res) => {
     const date = req.body.date || '';
     const time = req.body.time || '';
     const count = req.body.count || '';
+    const price = req.body.price || '';
+    const etc = req.body.etc || '';
 
     projects.ProjectSchedule.update(
     {
         category: category,
         date: date,
         time: time,
-        count: count
+        count: count,
+        price: price,
+        etc: etc
     },
     {where: {proj_id: id, id: task}, returning: true})
     .then((project) => {

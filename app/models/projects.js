@@ -44,7 +44,9 @@ const ProjectSchedule = sequelize.define('project_schedule', {
     category: Sequelize.STRING,
     date: Sequelize.STRING,
     time: Sequelize.STRING,
-    count: Sequelize.STRING
+    count: Sequelize.STRING,
+    price: Sequelize.STRING,
+    etc: Sequelize.STRING
 });
 const ProjectImage = sequelize.define('project_image', {
     id: {
