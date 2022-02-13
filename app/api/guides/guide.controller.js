@@ -28,11 +28,13 @@ exports.show = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const image = req.body.image || '';
     const id = req.params.id || '';
     if(!id.length) return res.status(400).json({err: 'id'});
     const title = req.body.title || '';
     
     guides.Guide.update({
+      image:image,
       title: title
     }, {
       where: {id: id}

@@ -17,7 +17,7 @@ app.use('/users', require('./api/users'));
 app.use('/schedules', require('./api/schedules'));
 app.use('/guides', require('./api/guides'));
 app.use('/projects', require('./api/projects'));
+app.use('/boards', require('./api/boards'));
 app.use('/static', express.static(__dirname+'/api/schedules/public'));
-app.use('/static2', express.static(__dirname+'/api/projects/public'));
 
 module.exports = app;
