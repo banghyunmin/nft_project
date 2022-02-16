@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 const multer = require('multer')
 const upload = multer({
-	dest: __dirname+'/public/images/boards/',
+	dest: __dirname+'/../schedules/public/images/boards/',
 })
 
 router.use(bodyParser.json());
@@ -28,11 +28,11 @@ router.get('/:id', controller.boardShow);
 router.put('/:id', controller.boardUpdate);
 router.delete('/:id', controller.boardDelete);
 // Image CRU
-router.post('/:id/images', upload.single('file'), controller.imageCreate);
+router.post('/:id/images', upload.array('files', 3), controller.imageCreate);
 router.get('/:id/images', controller.imageIndex);
-router.put('/:id/images/:img', upload.single('file'), controller.imageUpdate);
+router.put('/:id/images/:img', upload.array('files', 3), controller.imageUpdate);
 // Like  C
-router.post('/:id/like', controller.likeCreate);
+router.post('/:id/likes', controller.likeCreate);
 // Reply CR
-router.post('/:id/reply', controller.replyCreate);
-router.get('/:id/reply', controller.replyIndex);
+router.post('/:id/replys', controller.replyCreate);
+router.get('/:id/replys', controller.replyIndex);

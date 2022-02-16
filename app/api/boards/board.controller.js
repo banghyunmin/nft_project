@@ -161,6 +161,7 @@ exports.likeCreate = (req, res) => {
 };
 // create reply
 exports.replyCreate = (req, res) => {
+	console.log("reply")
     const id = parseInt(req.params.id, 10);
     const content = req.body.content || '';
     const user_id = req.body.user_id || '';
@@ -193,27 +194,62 @@ exports.replyIndex = (req, res) => {
 };
 // image create
 exports.imageCreate = (req, res) => {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    const image = req.file ? "http://180.228.243.235/static/images/boards/"+req.file.filename : '';
+    const removeImage = (idx, imgs) => {
+        const words = imgs[idx].split('/')
+        fs.unlink(__dirname + '/../schedules/public/images/boards/' + words[words.length - 1], function(err) {
+	  if(err) console.log("Error : ", err);
+        })
+    }
+	// 파라미터 가져오기
+    const images = []
+    for(var i = 0; i < req.files.length; i++) {
+      req.files[i] ? 
+	images.push("http://180.228.243.235/static/images/boards/"+req.files[i].filename) : '';
+    }
     const id = parseInt(req.params.id, 10);
-    if(!id || !image.length) {
-      const words = image1.split('/')
-      fs.unlink(__dirname + '/../schedules/public/images/boards/' + words[words.length - 1], function(err) {
-	if(err) console.log("Error : ", err)
-      })
+	// 무결성 체크
+    if(!id || !images.length) {
+      for(var i = 0; i < images.length; i++) {
+        removeImage(i, images);
+      }
       return res.status(400).json({err: 'Incorrect Input'})
     }
-
+	// create Data
     boards.BoardImage.create({
 	board_id: id,
-	image: image
+	image: images[0]
     })
-    .then((result) => res.status(201).json(result))
-    .catch((err) => {
-      const words = image.split('/')
-      fs.unlink(__dirname + '/../schedules/public/images/boards/' + words[words.length - 1], function(err) {
-	if(err) console.log("Error : ", err);
+    .then((result) => {
+      if(images.length < 2) return res.status.json(result)
+
+      boards.BoardImage.create({
+ 	board_id: id,
+	image: images[1]
       })
+      .then((result2) => {
+        if(images.length < 3) return res.status.json(resulti2)
+      }).catch((err2) => {
+        removeImage(1, images);
+        return res.status(400).json(err2);
+      })
+
+    })
+    .then(() => {
+
+      boards.BoardImage.create({
+ 	board_id: id,
+	image: images[2]
+      })
+      .then((result3) => {
+	return res.status(201).json(result3)
+      }).catch((err3) => {
+        removeImage(2, images);
+        return res.status(400).json(err3);
+      })
+
+    })
+    .catch((err) => {
+      removeImage(0, images);
       return res.status(400).json(err);
     });
 };
