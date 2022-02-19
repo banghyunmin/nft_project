@@ -28,7 +28,7 @@ exports.projectIndex = (req, res) => {
     projects.sequelize.query(query)
     .then((firstRes) => {
       const query2 = `
-	select a.id, b.category, b.date, b.time, b.count
+	select a.id, b.category, b.date, b.time, b.count, b.etc, b.price as sub_price
 	from projects as a
 	left outer join project_schedules as b on a.id = b.proj_id;
       `
@@ -129,6 +129,7 @@ const refactoring = (json) => {
       if(NowDate < elem.schedule[j].date && elem.schedule[j].date < elem.schedule[0].date) idx = j
     }
     
+    if(!results[i].price) results[i].price = elem.schedule[idx].sub_price
     results[i].category = elem.schedule[idx].category
     results[i].date = elem.schedule[idx].date
     results[i].time = elem.schedule[idx].time
@@ -215,7 +216,7 @@ exports.projectShow = (req, res) => {
     projects.sequelize.query(query)
     .then((firstRes) => {
       const query2 = `
-	select a.id, b.category, b.date, b.time, b.count
+	select a.id, b.category, b.date, b.time, b.count, b.etc, b.price as sub_price
 	from (select x.id, x.name from projects as x where x.id = `+id+` ) as a
 	left outer join project_schedules as b on a.id = b.proj_id
 	where a.id = `+id+`;
