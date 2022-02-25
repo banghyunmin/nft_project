@@ -23,6 +23,13 @@ const IncreaseHit = (board, id) => {
   })
 }
 
+const removeImage = (imgs) => {
+  const words = imgs.split('/')
+  console.log("\n\n", words[words.length - 1], "deleted\n\n")
+  fs.unlink(__dirname + '/../schedules/public/images/boards/' + words[words.length - 1], function(err) {
+    if(err) console.log("Error : ", err);
+  })
+}
 
 //==================================//
 //                                  //
@@ -112,11 +119,25 @@ exports.boardDelete = (req, res) => {
       where:{board_id:id}
     }).then(() => {
 
-      boards.BoardImage.destroy({
-	where:{board_id:id}
-      }).then(() => {}).catch((errI) => {
-        res.status(400).json("delete image fail")
-      })
+      boards.BoardImage.findAll({
+        where: {board_id: id}
+      }).then(function(results) {
+
+	for(var i = 0; i < results.length; i++) {
+	   removeImage(results[i].image)
+	}
+
+	// ===
+        boards.BoardImage.destroy({
+	  where:{board_id:id}
+        }).then(() => {}).catch((errI) => {
+          res.status(400).json("delete image fail")
+        })
+	// ===
+
+      }).catch(function(err) {
+        return res.status(404).json({err: 'Undefined error!'});
+      });
 
     }).then(() => {
 
@@ -194,12 +215,6 @@ exports.replyIndex = (req, res) => {
 };
 // image create
 exports.imageCreate = (req, res) => {
-    const removeImage = (idx, imgs) => {
-        const words = imgs[idx].split('/')
-        fs.unlink(__dirname + '/../schedules/public/images/boards/' + words[words.length - 1], function(err) {
-	  if(err) console.log("Error : ", err);
-        })
-    }
 	// 파라미터 가져오기
     const images = []
     for(var i = 0; i < req.files.length; i++) {
@@ -220,36 +235,22 @@ exports.imageCreate = (req, res) => {
 	image: images[0]
     })
     .then((result) => {
-      if(images.length < 2) return res.status.json(result)
 
-      boards.BoardImage.create({
- 	board_id: id,
-	image: images[1]
-      })
-      .then((result2) => {
-        if(images.length < 3) return res.status.json(resulti2)
-      }).catch((err2) => {
-        removeImage(1, images);
-        return res.status(400).json(err2);
-      })
+	for(var i = 1; i < images.length; i++) {
+	  boards.BoardImage.create({
+	    board_id: id,
+	    image: images[i]
+	  })
+	  .then(() => {
+	  }).catch(() => {
+            removeImage(images[i]);
+      	    return res.status(400).json(err);
+	  })
+	}
 
-    })
-    .then(() => {
-
-      boards.BoardImage.create({
- 	board_id: id,
-	image: images[2]
-      })
-      .then((result3) => {
-	return res.status(201).json(result3)
-      }).catch((err3) => {
-        removeImage(2, images);
-        return res.status(400).json(err3);
-      })
-
-    })
-    .catch((err) => {
-      removeImage(0, images);
+	return res.status(200).json(result)
+    }).catch((err) => {
+      removeImage(images[0]);
       return res.status(400).json(err);
     });
 };

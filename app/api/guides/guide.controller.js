@@ -46,11 +46,13 @@ exports.create = (req, res) => {
     // console.log("create");
     const image = req.file ? "http://180.228.243.235/static/guides/"+req.file.filename : '';
     const title = req.body.title || '';
+    const content = req.body.content || '';
     if(!title.length || !image.length) return res.status(400).json({err: 'id'});
     
     guides.Guide.create({
       image: image,
       title: title,
+      content: content,
     }).then((guide) => res.status(201).json(guide));
 };
 

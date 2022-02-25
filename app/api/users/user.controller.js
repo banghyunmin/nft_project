@@ -3,8 +3,10 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const config = require('../../config/environment');
 
-exports.index = (req, res) => {
+require('dotenv').config();
 
+exports.index = (req, res) => {
+    console.log(process.env.SECRET_KEY);
     models.User.findAll().then(function(results) {
         res.json(results);
     }).catch(function(err) {

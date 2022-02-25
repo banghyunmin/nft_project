@@ -17,6 +17,7 @@ const Guide = sequelize.define('guide', {
 	type: Sequelize.INTEGER
     },
     title: Sequelize.STRING,
+    content: Sequelize.STRING,
     image: Sequelize.STRING
 });
 
