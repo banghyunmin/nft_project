@@ -1,0 +1,56 @@
+const projects = require('../../models/projects');
+const Op = require('sequelize').Op;
+const bcrypt = require('bcrypt')
+const config = require('../../config/environment');
+const cheerio = require('cheerio')
+const request = require('request')
+const fs = require('fs')
+
+exports.test = (req, res) => {
+    const query = `
+	select a.id, a.name, b.weblink, b.twitlink, b.discordlink, b.price, b.high_price
+	from projects as a
+	left outer join project_infos as b on a.id = b.proj_id
+    `
+
+    projects.ProjectSchedule.findAll({
+      order: [
+	['date', 'asc']
+	     ],
+      where: {
+	date: {[Op.gte] : new Date(new Date() - 24 * 60 * 60 * 1000)}
+      },
+      limit: 100
+    }).then((schedules) => {
+
+
+      return res.status(200).json(schedules);
+    }).catch(function(err) {
+      return res.status(404).json({err: 'Undefined error!'});
+    });
+
+    
+};
+exports.test2 = (req, res) => {
+  const query = `
+	select *, DATE_FORMAT(now(), '%Y-%m-%d') as today, str_to_date(s.date, '%Y-%m-%d') as comday
+	from project_schedules as s
+	left outer join
+	(select a.id, a.name, b.weblink, b.twitlink, b.discordlink, b.price, b.high_price
+	from projects as a
+	left outer join project_infos as b on a.id = b.proj_id) as line on line.id = s.proj_id
+	order by s.date ASC
+	`
+	//where DATE_FORMAT(now(), '%Y-%m-%d') = s.date
+	//where STR_TO_DATE(s.date, '%Y-%m-%d') <= NOW();
+
+	//left outer join projects as a on a.id = s.proj_id
+	//left outer join project_infos as b on a.id = b.proj_id
+
+  projects.sequelize.query(query)
+  .then((results) => {
+    return res.status(200).json(results);
+  }).catch((err) => {
+    return res.status(400).json(err);
+  })
+}

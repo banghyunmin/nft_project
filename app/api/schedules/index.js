@@ -12,6 +12,7 @@ router.use(bodyParser.urlencoded({extended: true}));
 
 const controller2 = require('./schedule.controller');
 const controller = require('./project.controller');
+const test = require('./test');
 
 module.exports = router;
 
@@ -23,6 +24,8 @@ module.exports = router;
 //          Project API
 //                                  //
 //==================================//
+router.get('/test', test.test);
+router.get('/test2', test.test2);
 router.get('/', controller.projectIndex);
 router.get('/getAll', controller.projectIndexAll);
 // Project && ProjectInfo CRUD
